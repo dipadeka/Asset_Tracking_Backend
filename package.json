@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/dipadeka/Asset_Tracking_Backend/issues"
   },
-  "homepage": "https://github.com/dipadeka/Asset_Tracking_Backend#readme"
+  "homepage": "https://github.com/dipadeka/Asset_Tracking_Backend#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
