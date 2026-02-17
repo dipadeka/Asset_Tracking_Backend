@@ -13,7 +13,7 @@ app.listen(5000, () => {
 });
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://dipadeka133:dipadeka133@backenddb.i39qfwt.mongodb.net/Node-API?appName=BackendDB')
+mongoose.connect('mongodb+srv://dipadeka133:Dipajorhat@backenddb.i39qfwt.mongodb.net/?Node-API?retryWrites=true&w=majority&appName=BackendDB')
   .then(() => {console.log('Connected to MongoDB!');
 })
 .catch(() => {
