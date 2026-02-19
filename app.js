@@ -50,7 +50,7 @@ app.listen(5000, () => {
 });
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://dipadeka133:Dipajorhat@backenddb.i39qfwt.mongodb.net/Node-API?retryWrites=true&w=majority&appName=BackendDB')
+mongoose.connect('mongodb://localhost:27017/asset-management')
   .then(() => {console.log('Connected to MongoDB!');
 })
 .catch(() => {
