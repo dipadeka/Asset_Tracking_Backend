@@ -32,7 +32,7 @@ const assetSchema = new mongoose.Schema(
     },
     assetCode: {
       type: Number,
-      required: true,
+      required: false,
       unique: true,
     },
     projectName: {
@@ -53,7 +53,7 @@ const assetSchema = new mongoose.Schema(
     },
     gramPanchayat: {
       type: String,
-      required: true,
+      required: false,
     },
     village: {
       type: String,
