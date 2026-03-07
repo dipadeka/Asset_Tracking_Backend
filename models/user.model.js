@@ -12,11 +12,16 @@ const userSchema = new mongoose.Schema({
     },
     mobile: {
         type: String,
-        required: true
+        required: false
     },
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        required: false,
+        default:1
     },
     is_verified: {
         type: Number,

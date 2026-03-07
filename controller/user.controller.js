@@ -36,7 +36,6 @@ const userRegister = async (req, res) => {
         const userData = new user({
             name,
             email,
-            mobile,
             password: hashPassword,
 
         });

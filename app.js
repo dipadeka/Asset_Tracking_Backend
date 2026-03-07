@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const AssetsRoute = require('./routes/asset.route');
+const AuthRoute = require('./routes/auth.route')
 const app = express();
 
 app.use(express.json()); // Middleware to parse JSON bodies
@@ -19,6 +20,8 @@ app.use(
 
 
 app.use("/api/assets", AssetsRoute);
+app.use("/api/auth", AuthRoute);
+
 
 // ROUTE FIRST
 app.get('/', (req, res) => {
