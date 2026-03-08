@@ -1,40 +1,45 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
 const AssetsRoute = require('./routes/asset.route');
+const emrsRoute = require('./routes/emrsRoute');
+
+
 const app = express();
 
-app.use(express.json()); // Middleware to parse JSON bodies
-app.use(express.urlencoded({ extended: false })); // Middleware to parse URL-encoded bodies
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-
-//  Allow only your frontend
 app.use(
   cors({
-    origin: "http://localhost:5173", // or 5173 if using Vite
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
-
+// Routes
 app.use("/api/assets", AssetsRoute);
+app.use("/api/emrs", emrsRoute);
 
-// ROUTE FIRST
+// Test route
 app.get('/', (req, res) => {
-    res.send("Backend is working ✅");
+  res.send("Backend is working ✅");
 });
 
-// LISTEN LAST
-app.listen(5000, () => {
-    console.log("Server is running on port 5000 updated");
-});
 
 // MongoDB connection
 mongoose.connect('mongodb://localhost:27017/asset-management')
-  .then(() => {console.log('Connected to MongoDB!');
+.then(() => {
+  console.log('Connected to MongoDB!');
 })
-.catch(() => {
-    console.log("Error connecting to MongoDB:");
+.catch((error) => {
+  console.log("Error connecting to MongoDB:", error);
 });
 
+// Start server
+app.listen(5000, () => {
+  console.log("Server is running on port 5000");
+});
