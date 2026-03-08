@@ -6,6 +6,7 @@ const AssetsRoute = require('./routes/asset.route');
 const emrsRoute = require('./routes/emrsRoute');
 
 
+const AuthRoute = require('./routes/auth.route')
 const app = express();
 
 // Middleware
@@ -23,6 +24,8 @@ app.use(
 // Routes
 app.use("/api/assets", AssetsRoute);
 app.use("/api/emrs", emrsRoute);
+app.use("/api/auth", AuthRoute);
+
 
 // Test route
 app.get('/', (req, res) => {
