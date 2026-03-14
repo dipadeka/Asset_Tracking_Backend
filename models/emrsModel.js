@@ -1,13 +1,20 @@
 const mongoose = require("mongoose");
 
-// ── REUSABLE SUB-SCHEMAS ──
+// ── MONTHLY ATTENDANCE (both staff and enrollment) ──
+const monthlyAttendanceSchema = new mongoose.Schema({
+  month: String,
+  workingDays: Number,
+  present: Number
+}, { _id: false });
 
+// ── WARDEN ──
 const wardenSchema = new mongoose.Schema({
   name: String,
   email: String,
   contact: String
 }, { _id: false });
 
+// ── HOSTEL ──
 const hostelSchema = new mongoose.Schema({
   capacity: Number,
   bedsAvailable: Number,
@@ -15,11 +22,21 @@ const hostelSchema = new mongoose.Schema({
   cctvInstalled: String,
   noOfCCTV: Number,
   securityAgency: String,
-  waterStorage: String,      // ← new
-  backupPower: String,       // ← new
+  securityAgencyName: String,
+  securityAgencyContact: String,
   warden: wardenSchema
 }, { _id: false });
 
+// ── MESS COMPLIANCE ──
+const messComplianceSchema = new mongoose.Schema({
+  weeklyMenuDisplayed: String,
+  messInspectionRegister: String,
+  foodStockRegister: String,
+  foodComplaintRegister: String,
+  messCleanlinessDaily: String
+}, { _id: false });
+
+// ── QUALIFICATIONS ──
 const academicQualSchema = new mongoose.Schema({
   qualification: String,
   course: String,
@@ -41,13 +58,21 @@ const professionalQualSchema = new mongoose.Schema({
   affiliationBody: String
 }, { _id: false });
 
+// ── DROPOUT ──
 const dropoutSchema = new mongoose.Schema({
   rollNo: String,
   studentName: String,
   reason: String,
-  guardianContactNo: String
+  guardianName: String,
+  guardianContactNo: String,
+  pinCode: String,
+  district: String,
+  postOffice: String,
+  gramPanchayat: String,
+  village: String
 }, { _id: false });
 
+// ── MIGRATION ──
 const migrationSchema = new mongoose.Schema({
   studentName: String,
   migratedFrom: String,
@@ -55,6 +80,7 @@ const migrationSchema = new mongoose.Schema({
   reason: String
 }, { _id: false });
 
+// ── ACHIEVEMENT ──
 const achievementSchema = new mongoose.Schema({
   studentName: String,
   eventName: String,
@@ -62,24 +88,35 @@ const achievementSchema = new mongoose.Schema({
   recognition: String
 }, { _id: false });
 
-// ── CLASS STRENGTH (with everything nested inside) ──
+// ── CATEGORY BREAKDOWN ──
+const categoryBreakdownSchema = new mongoose.Schema({
+  ST: String,
+  PVTG: String,
+  "DNT/NT/SNT": String,
+  Orphan: String,
+  LWE: String,
+  Divyang: String
+}, { _id: false });
+
+// ── CLASS STRENGTH ──
 const classStrengthSchema = new mongoose.Schema({
   academicYear: String,
   class: String,
   section: String,
   sanctionedCapacity: Number,
   currentEnrollment: Number,
-  category: String,
+  categoryBreakdown: categoryBreakdownSchema,     // ← matches form
+  monthlyAttendance: [monthlyAttendanceSchema],   // ← matches form
   academicPerformance: {
     appeared: Number,
     passed: Number,
     passPercent: String,
     above75: Number,
     below50: Number,
-    stream: String,           // for class 11 & 12
-    distinctions: Number,     // for class 10, 11, 12
-    topScorer: String,        // for class 10, 11, 12
-    topScore: Number          // for class 10, 11, 12
+    stream: String,
+    distinctions: Number,
+    topScorer: String,
+    topScore: Number
   },
   dropouts: [dropoutSchema],
   migrations: [migrationSchema],
@@ -108,6 +145,7 @@ const hospitalizationSchema = new mongoose.Schema({
   reasonForHospitalization: String,
   hospitalEmpanelled: String,
   empanellementValidity: String,
+  empanelmentDepartment: String,   // ← matches department dropdown
   treatmentDetails: String,
   doctorName: String,
   estimatedCost: Number,
@@ -117,7 +155,7 @@ const hospitalizationSchema = new mongoose.Schema({
   guardianContact: String
 }, { _id: false });
 
-// ── TEACHING STAFF (qualifications nested inside each staff) ──
+// ── TEACHING STAFF ──
 const teachingStaffSchema = new mongoose.Schema({
   post: String,
   name: String,
@@ -130,10 +168,11 @@ const teachingStaffSchema = new mongoose.Schema({
   vacant: Number,
   academicQualifications: [academicQualSchema],
   professionalQualifications: [professionalQualSchema],
-  tetQualifications: [professionalQualSchema]
+  tetQualifications: [professionalQualSchema],   // ← teaching staff has TET
+  monthlyAttendance: [monthlyAttendanceSchema]   // ← matches renderStaffAttendance
 }, { _id: false });
 
-// ── NON-TEACHING STAFF (no TET) ──
+// ── NON-TEACHING STAFF ──
 const nonTeachingStaffSchema = new mongoose.Schema({
   post: String,
   name: String,
@@ -145,61 +184,104 @@ const nonTeachingStaffSchema = new mongoose.Schema({
   filled: Number,
   vacant: Number,
   academicQualifications: [academicQualSchema],
-  professionalQualifications: [professionalQualSchema]
+  professionalQualifications: [professionalQualSchema],
+  // no tetQualifications — showTET=false in renderQualificationTables
+  monthlyAttendance: [monthlyAttendanceSchema]   // ← matches renderStaffAttendance
 }, { _id: false });
 
+// ── OPERATIONAL COST ROW ──          ← ARRAY not object, matches operationalCostRows[]
+const operationalCostSchema = new mongoose.Schema({
+  year: String,
+  month: String,
+  costType: String,
+  amount: Number
+}, { _id: false });
+
+// ── CONSTRUCTION COMPONENT ──
+const constructionComponentSchema = new mongoose.Schema({
+  component: String,
+  units: String,
+  status: String,
+  progress: Number,
+  startDate: String,
+  endDate: String,
+  assignedTo: String,
+  budget: Number,
+  remarks: String
+}, { _id: false });
+
+// ════════════════════════════════════════════
 // ── MAIN EMRS SCHEMA ──
+// ════════════════════════════════════════════
 const emrsSchema = new mongoose.Schema({
 
-  // Basic Details (flat, not nested)
+  // ── BASIC DETAILS ──
+  // payload keys: EMRScode, EMRSid, udaisecode, schoolname, schooltype,
+  //               affiliation, principalName, contactno, email
   EMRScode: Number,
   EMRSid: String,
   udaisecode: Number,
   schoolname: String,
   schooltype: String,
-  affiliation: String,
-  principalName: String,
+  affiliation: String,       // ← payload sends data.Affiliation mapped to affiliation
+  principalName: String,     // ← payload sends data.NameofthePrincipal mapped to principalName
   contactno: String,
-  email: String,
+  email: String,             // ← payload sends data.emailid mapped to email
 
-  // Location (flat, pincode added)
+  // ── LOCATION ──
+  // payload keys: pincode, state, district, block, grampanchayat
   pincode: String,
   state: String,
   district: String,
   block: String,
   grampanchayat: String,
 
-  // Infrastructure (flat)
+  // ── INFRASTRUCTURE ──
+  // payload keys match exactly
   totalClassrooms: Number,
   classroomWithSmartClass: Number,
   classroomWithProjector: Number,
   scienceLab: String,
+  biologyLab: String,
+  chemistryLab: String,
+  physicsLab: String,
   computerLab: String,
   library: String,
   booksInLibrary: Number,
   playground: String,
-  auditorium: String,
-  medicalRoom: String,
+  playgroundArea: Number,
+  auditorium: String,          // ← payload: data.Auditorium → auditorium
+  auditoriumCapacity: Number,  // ← payload: data.auditoriumCapacity
+  medicalRoom: String,         // ← payload: data["Medical Room"] → medicalRoom
 
-  // Hostels (separate boys and girls)
+  // ── HOSTELS ──
   boysHostel: hostelSchema,
   girlsHostel: hostelSchema,
 
-  // Student Data
+  // ── MESS COMPLIANCE ──         ← payload: messCompliance object
+  messCompliance: messComplianceSchema,
+
+  // ── STUDENT DATA ──
   classStrength: [classStrengthSchema],
   extraCurricular: [extraCurricularSchema],
   hospitalization: [hospitalizationSchema],
 
-  // Staff
+  // ── STAFF ──
   teachingStaff: [teachingStaffSchema],
   nonTeachingStaff: [nonTeachingStaffSchema],
 
-  // Operational Cost
-  operationalCost: {
-    year: String,
-    month: String,
-    costType: String,
-    amount: Number
+  // ── OPERATIONAL COST ──         ← ARRAY matches operationalCostRows[]
+  operationalCost: [operationalCostSchema],
+
+  // ── CONSTRUCTION STATUS ──
+  constructionStatus: {
+    projectStartDate: String,
+    expectedEndDate: String,
+    totalBudget: Number,
+    school:    [constructionComponentSchema],
+    residence: [constructionComponentSchema],
+    outdoor:   [constructionComponentSchema],
+    utilities: [constructionComponentSchema]
   }
 
 }, { timestamps: true });

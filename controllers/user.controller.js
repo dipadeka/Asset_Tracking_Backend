@@ -62,7 +62,8 @@ const userSignIn = async (req, res) => {
 const userRegister = async (req, res) => {
     try {
         const errors = validationResult(req);
-        if (errors.isEmpty()) {
+        if (!errors.isEmpty()) {
+            console.log("1",errors)
             return res.status(400).json({
                 success: false,
                 message: 'Errors',
