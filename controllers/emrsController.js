@@ -3,12 +3,21 @@ const EMRS = require("../models/emrsModel");
 // ================= CREATE EMRS =================
 const createEMRS = async (req, res) => {
   try {
-    const existing = await EMRS.findOne({ EMRScode: req.body.EMRScode });
-    if (existing) {
-      return res.status(400).json({
-        success: false,
-        message: `EMRS with code ${req.body.EMRScode} already exists`
-      });
+    // ✅ If EMRScode exists, update instead of reject
+    if (req.body.EMRScode && req.body.EMRScode !== null) {
+      const existing = await EMRS.findOne({ EMRScode: req.body.EMRScode });
+      if (existing) {
+        const updated = await EMRS.findOneAndUpdate(
+          { EMRScode: req.body.EMRScode },
+          req.body,
+          { new: true }
+        );
+        return res.status(200).json({
+          success: true,
+          message: "EMRS Data Updated Successfully",
+          data: updated
+        });
+      }
     }
 
     const emrs = new EMRS(req.body);
@@ -21,7 +30,7 @@ const createEMRS = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("FULL ERROR:", error);
     res.status(500).json({
       success: false,
       message: "Error creating EMRS data",
@@ -29,8 +38,6 @@ const createEMRS = async (req, res) => {
     });
   }
 };
-
-
 // ================= GET ALL EMRS =================
 const getEMRS = async (req, res) => {
   try {
@@ -85,7 +92,7 @@ const updateEMRS = async (req, res) => {
     const updatedEMRS = await EMRS.findByIdAndUpdate(
       id,
       req.body,
-      { new: true, runValidators: true }  // ← add runValidators
+      { new: true, runValidators: true }  //  runValidators
     );
 
     if (!updatedEMRS) {

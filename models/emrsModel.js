@@ -105,8 +105,8 @@ const classStrengthSchema = new mongoose.Schema({
   section: String,
   sanctionedCapacity: Number,
   currentEnrollment: Number,
-  categoryBreakdown: categoryBreakdownSchema,     // ← matches form
-  monthlyAttendance: [monthlyAttendanceSchema],   // ← matches form
+  categoryBreakdown: categoryBreakdownSchema,     
+  monthlyAttendance: [monthlyAttendanceSchema],   
   academicPerformance: {
     appeared: Number,
     passed: Number,
@@ -145,7 +145,7 @@ const hospitalizationSchema = new mongoose.Schema({
   reasonForHospitalization: String,
   hospitalEmpanelled: String,
   empanellementValidity: String,
-  empanelmentDepartment: String,   // ← matches department dropdown
+  empanelmentDepartment: String,   
   treatmentDetails: String,
   doctorName: String,
   estimatedCost: Number,
@@ -168,8 +168,8 @@ const teachingStaffSchema = new mongoose.Schema({
   vacant: Number,
   academicQualifications: [academicQualSchema],
   professionalQualifications: [professionalQualSchema],
-  tetQualifications: [professionalQualSchema],   // ← teaching staff has TET
-  monthlyAttendance: [monthlyAttendanceSchema]   // ← matches renderStaffAttendance
+  tetQualifications: [professionalQualSchema],   
+  monthlyAttendance: [monthlyAttendanceSchema]   
 }, { _id: false });
 
 // ── NON-TEACHING STAFF ──
@@ -186,10 +186,10 @@ const nonTeachingStaffSchema = new mongoose.Schema({
   academicQualifications: [academicQualSchema],
   professionalQualifications: [professionalQualSchema],
   // no tetQualifications — showTET=false in renderQualificationTables
-  monthlyAttendance: [monthlyAttendanceSchema]   // ← matches renderStaffAttendance
+  monthlyAttendance: [monthlyAttendanceSchema]  
 }, { _id: false });
 
-// ── OPERATIONAL COST ROW ──          ← ARRAY not object, matches operationalCostRows[]
+// ── OPERATIONAL COST ROW ──          
 const operationalCostSchema = new mongoose.Schema({
   year: String,
   month: String,
@@ -223,10 +223,10 @@ const emrsSchema = new mongoose.Schema({
   udaisecode: Number,
   schoolname: String,
   schooltype: String,
-  affiliation: String,       // ← payload sends data.Affiliation mapped to affiliation
-  principalName: String,     // ← payload sends data.NameofthePrincipal mapped to principalName
+  affiliation: String,       // payload sends data.Affiliation mapped to affiliation
+  principalName: String,     // payload sends data.NameofthePrincipal mapped to principalName
   contactno: String,
-  email: String,             // ← payload sends data.emailid mapped to email
+  email: String,             // payload sends data.emailid mapped to email
 
   // ── LOCATION ──
   // payload keys: pincode, state, district, block, grampanchayat
@@ -250,15 +250,15 @@ const emrsSchema = new mongoose.Schema({
   booksInLibrary: Number,
   playground: String,
   playgroundArea: Number,
-  auditorium: String,          // ← payload: data.Auditorium → auditorium
-  auditoriumCapacity: Number,  // ← payload: data.auditoriumCapacity
-  medicalRoom: String,         // ← payload: data["Medical Room"] → medicalRoom
+  auditorium: String,          // payload: data.Auditorium → auditorium
+  auditoriumCapacity: Number,  // payload: data.auditoriumCapacity
+  medicalRoom: String,         // payload: data["Medical Room"] medicalRoom
 
   // ── HOSTELS ──
   boysHostel: hostelSchema,
   girlsHostel: hostelSchema,
 
-  // ── MESS COMPLIANCE ──         ← payload: messCompliance object
+  // ── MESS COMPLIANCE ──         payload: messCompliance object
   messCompliance: messComplianceSchema,
 
   // ── STUDENT DATA ──
@@ -270,7 +270,7 @@ const emrsSchema = new mongoose.Schema({
   teachingStaff: [teachingStaffSchema],
   nonTeachingStaff: [nonTeachingStaffSchema],
 
-  // ── OPERATIONAL COST ──         ← ARRAY matches operationalCostRows[]
+  // ── OPERATIONAL COST ──         
   operationalCost: [operationalCostSchema],
 
   // ── CONSTRUCTION STATUS ──
