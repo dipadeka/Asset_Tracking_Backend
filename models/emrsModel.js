@@ -214,10 +214,11 @@ const constructionComponentSchema = new mongoose.Schema({
 // ── MAIN EMRS SCHEMA ──
 // ════════════════════════════════════════════
 const emrsSchema = new mongoose.Schema({
-
-  // ── BASIC DETAILS ──
-  // payload keys: EMRScode, EMRSid, udaisecode, schoolname, schooltype,
-  //               affiliation, principalName, contactno, email
+ userId: {
+    type: String,
+    required: true,
+  },
+  // ── BASIC DETAILS ──  
   EMRScode: Number,
   EMRSid: String,
   udaisecode: Number,
