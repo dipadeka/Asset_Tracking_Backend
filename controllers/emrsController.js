@@ -1,16 +1,19 @@
 const EMRS = require("../models/emrsModel");
+const { sanitizeEmrsPayload } = require("../utils/emrsPayloadSanitizer");
 
 // ================= CREATE EMRS =================
 const createEMRS = async (req, res) => {
   try {
+    const payload = sanitizeEmrsPayload(req.body);
+
     // ✅ If EMRScode exists, update instead of reject
-    if (req.body.EMRScode && req.body.EMRScode !== null) {
-      const existing = await EMRS.findOne({ EMRScode: req.body.EMRScode });
+    if (payload.EMRScode && payload.EMRScode !== null) {
+      const existing = await EMRS.findOne({ EMRScode: payload.EMRScode });
       if (existing) {
         const updated = await EMRS.findOneAndUpdate(
-          { EMRScode: req.body.EMRScode },
-          req.body,
-          { new: true }
+          { EMRScode: payload.EMRScode },
+          payload,
+          { new: true, runValidators: true }
         );
         return res.status(200).json({
           success: true,
@@ -20,7 +23,7 @@ const createEMRS = async (req, res) => {
       }
     }
 
-    const emrs = new EMRS(req.body);
+    const emrs = new EMRS(payload);
     const savedEMRS = await emrs.save();
 
     res.status(201).json({
@@ -31,9 +34,10 @@ const createEMRS = async (req, res) => {
 
   } catch (error) {
     console.error("FULL ERROR:", error);
-    res.status(500).json({
+    const status = error.statusCode || (error.name === "ValidationError" ? 400 : 500);
+    res.status(status).json({
       success: false,
-      message: "Error creating EMRS data",
+      message: status === 400 ? "Invalid EMRS data" : "Error creating EMRS data",
       error: error.message
     });
   }
@@ -89,10 +93,11 @@ const updateEMRS = async (req, res) => {
   try {
     const { id } = req.params;
 
+    const payload = sanitizeEmrsPayload(req.body);
     const updatedEMRS = await EMRS.findByIdAndUpdate(
       id,
-      req.body,
-      { new: true, runValidators: true }  //  runValidators
+      payload,
+      { new: true, runValidators: true }
     );
 
     if (!updatedEMRS) {
@@ -109,9 +114,10 @@ const updateEMRS = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
+    const status = error.statusCode || (error.name === "ValidationError" ? 400 : 500);
+    res.status(status).json({
       success: false,
-      message: "Error updating EMRS",
+      message: status === 400 ? "Invalid EMRS data" : "Error updating EMRS",
       error: error.message
     });
   }
