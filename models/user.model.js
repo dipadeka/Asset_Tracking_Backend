@@ -19,9 +19,9 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     role: {
-        type: String,
+        type: mongoose.Schema.Types.Mixed,
         required: false,
-        default:1
+        default: 1
     },
     is_verified: {
         type: Number,

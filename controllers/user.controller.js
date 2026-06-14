@@ -8,16 +8,23 @@ const userSignIn = async (req, res) => {
 
         const { email, password, role } = req.body;
 
-        if (!email || !password || !role) {
+        if (!email || !password) {
             return res.status(400).json({
                 success: false,
                 message: "Email and Password are required"
             });
         }
 
-        const userData = await user.findOne({ email, role });
+        const userData = await user.findOne({ email });
 
         if (!userData) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Email or Password"
+            });
+        }
+
+        if (role !== undefined && role !== null && String(userData.role) !== String(role)) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid Email or Password"
