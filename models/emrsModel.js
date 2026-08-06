@@ -4,8 +4,18 @@ const mongoose = require("mongoose");
 const monthlyAttendanceSchema = new mongoose.Schema({
   month: String,
   workingDays: Number,
-  present: Number
-}, { _id: false });
+  totalStudents: Number,
+  totalPresent: Number,
+  present: Number,
+  daysPresent: Number,
+  daysAbsent: Number,
+  percentage: Number,
+  casualLeave: Number,
+  earnedLeave: Number,
+  medicalLeave: Number,
+  maternityLeave: Number,
+  paternityLeave: Number,
+}, { _id: false, strict: false });
 
 // ── WARDEN ──
 const wardenSchema = new mongoose.Schema({
@@ -45,8 +55,11 @@ const academicQualSchema = new mongoose.Schema({
   college: String,
   marksObtained: String,
   university: String,
-  passingYear: String
-}, { _id: false });
+  passingYear: String,
+  post: String,
+  name: String,
+  staffname: String,
+}, { _id: false, strict: false });
 
 const professionalQualSchema = new mongoose.Schema({
   qualification: String,
@@ -55,8 +68,11 @@ const professionalQualSchema = new mongoose.Schema({
   examConductedBy: String,
   passingYear: String,
   marksObtained: String,
-  affiliationBody: String
-}, { _id: false });
+  affiliationBody: String,
+  post: String,
+  name: String,
+  staffname: String,
+}, { _id: false, strict: false });
 
 // ── DROPOUT ──
 const dropoutSchema = new mongoose.Schema({
@@ -163,14 +179,17 @@ const teachingStaffSchema = new mongoose.Schema({
   doj: String,
   email: String,
   contact: String,
+  contactNumber: String,
   total: Number,
   filled: Number,
   vacant: Number,
   academicQualifications: [academicQualSchema],
   professionalQualifications: [professionalQualSchema],
-  tetQualifications: [professionalQualSchema],   
-  monthlyAttendance: [monthlyAttendanceSchema]   
-}, { _id: false });
+  tetQualifications: [professionalQualSchema],
+  monthlyAttendance: [monthlyAttendanceSchema],
+  staffName: String,
+  staffType: String,
+}, { _id: false, strict: false });
 
 // ── NON-TEACHING STAFF ──
 const nonTeachingStaffSchema = new mongoose.Schema({
@@ -180,14 +199,16 @@ const nonTeachingStaffSchema = new mongoose.Schema({
   doj: String,
   email: String,
   contact: String,
+  contactNumber: String,
   total: Number,
   filled: Number,
   vacant: Number,
   academicQualifications: [academicQualSchema],
   professionalQualifications: [professionalQualSchema],
-  // no tetQualifications — showTET=false in renderQualificationTables
-  monthlyAttendance: [monthlyAttendanceSchema]  
-}, { _id: false });
+  monthlyAttendance: [monthlyAttendanceSchema],
+  staffName: String,
+  staffType: String,
+}, { _id: false, strict: false });
 
 // ── OPERATIONAL COST ROW ──          
 const operationalCostSchema = new mongoose.Schema({
@@ -291,6 +312,6 @@ const emrsSchema = new mongoose.Schema({
     utilities: [constructionComponentSchema]
   }
 
-}, { timestamps: true });
+}, { timestamps: true, strict: false });
 
 module.exports = mongoose.model("EMRS", emrsSchema);

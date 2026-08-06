@@ -6,7 +6,8 @@ const user = require('../models/user.model');
 const userSignIn = async (req, res) => {
     try {
 
-        const { email, password, role } = req.body;
+        const { 
+            email, password, role } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({

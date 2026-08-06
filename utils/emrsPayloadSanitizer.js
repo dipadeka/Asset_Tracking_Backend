@@ -17,8 +17,31 @@ const sanitizeConstructionComponents = (rows = []) =>
     budget: toSafeNumber(row.budget, 0),
   }));
 
+const normalizeAttendanceRows = (rows = []) =>
+  (Array.isArray(rows) ? rows : []).map((row) => ({
+    ...row,
+    workingDays: toSafeNumber(row.workingDays, 0),
+    totalStudents: toSafeNumber(row.totalStudents, 0),
+    totalPresent: toSafeNumber(row.totalPresent, 0),
+    present: toSafeNumber(row.present, 0),
+    daysPresent: toSafeNumber(row.daysPresent, 0),
+    daysAbsent: toSafeNumber(row.daysAbsent, 0),
+    percentage: toSafeNumber(row.percentage, 0),
+    casualLeave: toSafeNumber(row.casualLeave, 0),
+    earnedLeave: toSafeNumber(row.earnedLeave, 0),
+    medicalLeave: toSafeNumber(row.medicalLeave, 0),
+    maternityLeave: toSafeNumber(row.maternityLeave, 0),
+    paternityLeave: toSafeNumber(row.paternityLeave, 0),
+  }));
+
 const sanitizeEmrsPayload = (body = {}) => {
   const payload = { ...body };
+
+  if (payload.schoolname == null && payload.schoolName) payload.schoolname = payload.schoolName;
+  if (payload.affiliation == null && payload.Affiliation) payload.affiliation = payload.Affiliation;
+  if (payload.principalName == null && payload.NameofthePrincipal) payload.principalName = payload.NameofthePrincipal;
+  if (payload.email == null && payload.emailid) payload.email = payload.emailid;
+  if (payload.grampanchayat == null && payload.gramPanchayat) payload.grampanchayat = payload.gramPanchayat;
 
   if ("udaisecode" in payload) {
     const udise = toOptionalNumber(payload.udaisecode);
@@ -73,6 +96,55 @@ const sanitizeEmrsPayload = (body = {}) => {
   if (payload.gramPanchayat && !payload.grampanchayat) {
     payload.grampanchayat = payload.gramPanchayat;
     delete payload.gramPanchayat;
+  }
+
+  if (payload.waterHygieneSanitation) {
+    payload.waterHygieneSanitation = {
+      ...payload.waterHygieneSanitation,
+    };
+  }
+
+  if (payload.teachingStaffAttendance) {
+    payload.teachingStaffAttendance = normalizeAttendanceRows(payload.teachingStaffAttendance);
+  }
+
+  if (payload.nonTeachingStaffAttendance) {
+    payload.nonTeachingStaffAttendance = normalizeAttendanceRows(payload.nonTeachingStaffAttendance);
+  }
+
+  if (payload.studentAttendance) {
+    payload.studentAttendance = normalizeAttendanceRows(payload.studentAttendance);
+  }
+
+  if (Array.isArray(payload.teachingStaff)) {
+    payload.teachingStaff = payload.teachingStaff.map((staff) => ({
+      ...staff,
+      total: toSafeNumber(staff.total, 0),
+      filled: toSafeNumber(staff.filled, 0),
+      vacant: toSafeNumber(staff.vacant, 0),
+      contact: String(staff.contact ?? staff.contactNumber ?? "").trim(),
+      contactNumber: String(staff.contactNumber ?? staff.contact ?? "").trim(),
+    }));
+  }
+
+  if (Array.isArray(payload.nonTeachingStaff)) {
+    payload.nonTeachingStaff = payload.nonTeachingStaff.map((staff) => ({
+      ...staff,
+      total: toSafeNumber(staff.total, 0),
+      filled: toSafeNumber(staff.filled, 0),
+      vacant: toSafeNumber(staff.vacant, 0),
+      contact: String(staff.contact ?? staff.contactNumber ?? "").trim(),
+      contactNumber: String(staff.contactNumber ?? staff.contact ?? "").trim(),
+    }));
+  }
+
+  if (Array.isArray(payload.classStrength)) {
+    payload.classStrength = payload.classStrength.map((row) => ({
+      ...row,
+      sanctionedCapacity: toSafeNumber(row.sanctionedCapacity, 0),
+      currentEnrollment: toSafeNumber(row.currentEnrollment, 0),
+      monthlyAttendance: normalizeAttendanceRows(row.monthlyAttendance),
+    }));
   }
 
   return payload;

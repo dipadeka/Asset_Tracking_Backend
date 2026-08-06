@@ -3,12 +3,15 @@ const router = express.Router();
 const {
   createEMRS,
   getEMRS,
-  getEMRSById,  
+  getEMRSById,
   updateEMRS,
-  deleteEMRS
+  deleteEMRS,
+  testEmailNotification,
 } = require("../controllers/emrsController");
 
+router.post("/", createEMRS);
 router.post("/create", createEMRS);
+router.get("/test-email", testEmailNotification);
 router.get("/", getEMRS);
 router.get("/:id", getEMRSById);   
 router.put("/:id", updateEMRS);

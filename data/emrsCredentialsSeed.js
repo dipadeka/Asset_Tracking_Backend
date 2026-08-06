@@ -86,7 +86,7 @@ const SCHOOL_CREDENTIALS = [
     schoolCode: "EMRS-AS-05",
     schoolName: "EMRS,Haflong, Vill. Ardaopur",
     district: "Dima Hasao",
-    block: "Haflong",
+    block: "Haflong", 
     gramPanchayat: "Ardaopur",
     village: "Ardaopur",
     pincode: "788819",

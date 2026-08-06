@@ -29,9 +29,7 @@ const createAssets = async (req,res) => {
         console.error("Error processing request:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
-
 };
-
 const updateAssets = async (req, res) => {
     try {
             const { id } = req.params;
