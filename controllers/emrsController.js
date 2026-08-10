@@ -2,26 +2,11 @@ const EMRS = require("../models/emrsModel");
 const { sanitizeEmrsPayload } = require("../utils/emrsPayloadSanitizer");
 
 // ================= CREATE EMRS =================
+// Always inserts a new document. Re-submitting the same EMRScode must not
+// overwrite prior submissions — use PUT /api/emrs/:id to update an existing one.
 const createEMRS = async (req, res) => {
   try {
     const payload = sanitizeEmrsPayload(req.body);
-
-    // ✅ If EMRScode exists, update instead of reject
-    if (payload.EMRScode && payload.EMRScode !== null) {
-      const existing = await EMRS.findOne({ EMRScode: payload.EMRScode });
-      if (existing) {
-        const updated = await EMRS.findOneAndUpdate(
-          { EMRScode: payload.EMRScode },
-          payload,
-          { new: true, runValidators: true }
-        );
-        return res.status(200).json({
-          success: true,
-          message: "EMRS Data Updated Successfully",
-          data: updated
-        });
-      }
-    }
 
     const emrs = new EMRS(payload);
     const savedEMRS = await emrs.save();
