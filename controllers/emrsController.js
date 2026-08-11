@@ -115,31 +115,11 @@ const sendAdminNotification = async (payload, context = "form") => {
 };
 
 // ================= CREATE EMRS =================
+// Always inserts a new document. Re-submitting the same EMRScode must not
+// overwrite prior submissions — use PUT /api/emrs/:id to update an existing one.
 const createEMRS = async (req, res) => {
   try {
     const payload = sanitizeEmrsPayload(req.body);
-
-    // ✅ If EMRScode exists, update instead of reject
-    if (payload.EMRScode && payload.EMRScode !== null) {
-      const existing = await EMRS.findOne({ EMRScode: payload.EMRScode });
-      if (existing) {
-        const updated = await EMRS.findOneAndUpdate(
-          { EMRScode: payload.EMRScode },
-          payload,
-          { new: true, runValidators: true }
-        );
-        const notificationResult = await sendAdminNotification(
-          payload,
-          hasAttendancePayload(payload) ? "monthly-attendance" : "form"
-        );
-        return res.status(200).json({
-          success: true,
-          message: "EMRS Data Updated Successfully",
-          notificationResult,
-          data: updated
-        });
-      }
-    }
 
     const emrs = new EMRS(payload);
     const savedEMRS = await emrs.save();
