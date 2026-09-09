@@ -239,6 +239,7 @@ const emrsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  clientSubmissionId: String,
 
   // ── BASIC DETAILS ──
   // payload keys: EMRScode, EMRSid, schoolCode, udaisecode, schoolname, schooltype,
